@@ -88,6 +88,47 @@ class Connection {
         // var_dump($res);
         return $res;
     }
+    function entryExists($params) {
+        $stmt = $this->conn->prepare("SELECT * FROM RefOrg WHERE referringOrganization=:org AND referringProgOrLocation=:prog");
+        $this->varData = array(
+            ':org' => $params['org'],
+            ':prog' => $params['prog']
+        );
+        $stmt->execute($this->varData);
+        if($stmt->rowCount > 0) {
+            //exists
+            return true;
+        } else {
+            //doesn't exist
+            return false;
+        }
+    }
+    function updateRefOrg($params) {
+        $stmt = $this->conn->prepare("UPDATE RefOrg SET
+        referringOrganization=:org,
+        referringProgOrLocation=:prog,
+        orgAddressOne=:orgAddressOne,
+        orgAddressTwo=:orgAddressTwo,
+        orgAddressCity=:orgAddressCity,
+        orgAddressState=:orgAddressState,
+        orgAddressZip=:orgAddressZip 
+        WHERE 
+        referringOrganization=:org AND referringProgOrLocation=:prog");
+        $this->varData = array(
+            ':org' => $params['org'],
+            ':prog' => $params['prog'],
+            ':orgAddressOne' => $params['orgAddressOne'],
+            ':orgAddressTwo' => $params['orgAddressTwo'],
+            ':orgAddressCity' => $params['orgAddressCity'],
+            ':orgAddressState' => $params['orgAddressState'],
+            ':orgAddressZip' => $params['orgAddressZip'],            
+        );
+        $stmt->execute($this->varData);
+        return ($stmt->rowCount > 0);
+    }
+    function createNewRefOrg($params) {
+
+    }
     function disconnect() {
         try {
             $this->conn = null;

@@ -54,10 +54,32 @@ $app->get('/refOrg', function ($request, $response, $args) {
     $connObj->disconnect();
     return json_encode($res);
 });
-$app->patch('/refOrg', function ($request, $response, $args) {
+$app->patch('/refOrg/update', function ($request, $response, $args) {
     $jsonData = $request->getParsedBody($request);
     $connObj = new Connection();
     $connObj->connectToDb();
+    //check if entry exists
+    $params = array(
+        'org' => (isset($jsonData['referringOrganization']) ? $jsonData['referringOrganization'] : ""),
+        'prog' => (isset($jsonData['referringProgOrLocation']) ? $jsonData['referringProgOrLocation'] : ""),
+        'orgAddressOne' => (isset($jsonData['orgAddressOne']) ? $jsonData['orgAddressOne'] : ""),
+        'orgAddressTwo' => (isset($jsonData['orgAddressTwo']) ? $jsonData['orgAddressTwo'] : ""),
+        'orgAddressCity' => (isset($jsonData['orgAddressCity']) ? $jsonData['orgAddressCity'] : ""),
+        'orgAddressState' => (isset($jsonData['orgAddressState']) ? $jsonData['orgAddressState'] : ""),
+        'orgAddressZip' => (isset($jsonData['orgAddressZip']) ? $jsonData['orgAddressZip'] : "")
+    );
+
+    if($connObj->entryExists($params)) {
+        //entry exists, call update
+        if($connObj->updateRefOrg($params)) {
+            $status = $response->withStatus(200);
+        } else {
+            //send 400
+            $status = $response->withStatus(400);
+        }
+    } else {
+        //entry does not exists, call insert
+    }
     
 });
 $app->patch('/login', function ($request, $response, $args) {
