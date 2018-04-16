@@ -6,9 +6,9 @@ class Connection {
     public $dbName;
     private $conn;
     public $varData = [];
-    function __construct() {
-        $this->uname = 'root';
-        $this->pwd = 'betazelda64';
+    function __construct($uname,$pwd) {
+        $this->uname = $uname;
+        $this->pwd = $pwd;
         $this->dbUrl = "localhost";
         $this->dbName = "restTest";
         $this->dsn = 'mysql:dbname=restTest;host=localhost';

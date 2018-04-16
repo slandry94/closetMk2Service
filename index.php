@@ -5,6 +5,7 @@ header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Respon
 require 'vendor/autoload.php';
 require_once 'user/user.php';
 require_once 'conn/connection.php';
+require_once 'config/credentials.php';
 $app = new Slim\App();
 $app->get('/hello/{name}', function ($request, $response, $args) {
     return $response->getBody()->write("Hello, " . $args['name']);
@@ -32,7 +33,7 @@ $app->get('/clients/{id}', function ($request, $response, $args) {
     }
 });
 $app->get('/users', function ($request, $response, $args) {
-    $connObj = new Connection();
+    $connObj = new Connection($credentials['username'],$credentials['password']);
     $connObj->connectToDb();
     return $response->getBody()->write($connObj->getUserList());
     $connObj->disconnect();
@@ -43,7 +44,7 @@ $app->get('/users', function ($request, $response, $args) {
 // });
 $app->get('/refOrg', function ($request, $response, $args) {
     $reqParams = $request->getQueryParams();
-    $connObj = new Connection();
+    $connObj = new Connection($credentials['username'],$credentials['password']);
     $connObj->connectToDb();
     $params = array(
         'org' => (isset($reqParams['organization']) ? $reqParams['organization'] : ""),
@@ -56,7 +57,7 @@ $app->get('/refOrg', function ($request, $response, $args) {
 });
 $app->patch('/refOrg/update', function ($request, $response, $args) {
     $jsonData = $request->getParsedBody($request);
-    $connObj = new Connection();
+    $connObj = new Connection($credentials['username'],$credentials['password']);
     $connObj->connectToDb();
     //check if entry exists
     $params = array(
@@ -88,7 +89,7 @@ $app->patch('/login', function ($request, $response, $args) {
     //var_dump($obj);
     $uname = $obj['username'];
     $pwdHash = $obj['password'];
-    $connObj = new Connection();
+    $connObj = new Connection($credentials['username'],$credentials['password']);
     $connObj->connectToDb();
     $params = [
         'username' => $uname,
